@@ -39,7 +39,11 @@ class Game:
 
         for go in self.objects:
             go.on_event(events)
+
+        for go in self.objects:
             go.process()
+
+        for go in self.objects:
             go.draw()
 
         pygame.display.update()
