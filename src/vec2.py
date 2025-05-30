@@ -6,8 +6,6 @@ import math
 
 class vec2:
 
-    FLOAT_TOL = .0001
-
     def __init__(self, x, y):
         self.x = x
         self.y = y

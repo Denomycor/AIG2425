@@ -1,6 +1,7 @@
 from skel import WorldObject
 from vec2 import vec2
 import pygame
+import shapes
 from transform import apply_transform_to_points, chain_transforms, rotation, transpose, scale
 
 
@@ -39,11 +40,12 @@ class Car(WorldObject):
 
     def draw(self):
         super().draw()
-        points = [vec2(1,0), vec2(0,-0.5), vec2(0,.5)]
+        points = shapes.triangle()
         transform = chain_transforms(scale(vec2(10, 10)), rotation(self.rotation), transpose(self.pos))
         points2 = apply_transform_to_points(points, transform)
 
         f_points = [v.to_tuple() for v in points2]
         
         pygame.draw.polygon(self.game.window.display, self.color, f_points, width=3)
+
 
