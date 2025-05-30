@@ -16,7 +16,7 @@ class Car(WorldObject):
         self.velocity = vec2.zero()
         self.color = color
 
-        self.pos = vec2(200, 200)
+        self.pos = vec2(1920/4, 1080/4)
 
 
     def move_forward(self, delta):

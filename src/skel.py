@@ -47,7 +47,7 @@ class Game:
         self.objects.remove(game_object)
 
     def run(self):
-        self.window.display.fill((255, 255, 255))
+        self.window.display.fill(self.window.default_color)
         events = []
         delta = self.clock.tick(60) / 1000
         for e in pygame.event.get():
