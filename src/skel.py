@@ -5,15 +5,25 @@ class GameObject(object):
 
     def __init__(self, game):
         self.game = game
+        self.objects: list[GameObject] = []
+
+    def add_object(self, game_object):
+        self.objects.append(game_object)
+
+    def remove_object(self, game_object):
+        self.objects.remove(game_object)
 
     def draw(self):
-        pass
+        for c in self.objects:
+            c.draw()
 
     def process(self):
-        pass
+        for c in self.objects:
+            c.process()
 
     def on_event(self, events):
-        pass
+        for c in self.objects:
+            c.on_event(events)
 
 
 class Game:
