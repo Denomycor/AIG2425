@@ -2,6 +2,9 @@ from skel import Game, Window
 from car import Car
 import pygame
 import math
+from vec2 import vec2
+
+from track import Track
 
 
 def main():
@@ -15,8 +18,11 @@ def main():
         acceleration=10.0,
         steering=math.pi*2,
         break_strenght=5.0,
-        color=(0, 0, 0)
+        color=(255, 0, 0)
     )
+    track = Track(game, [vec2(200, 200), vec2(800, 500), vec2(700, 300)], (0,0,0), 40)
+
+    game.add_object(track)
     game.add_object(car)
 
     while(game.running):

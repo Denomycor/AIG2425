@@ -46,6 +46,6 @@ class Car(WorldObject):
 
         f_points = [v.to_tuple() for v in points2]
         
-        pygame.draw.polygon(self.game.window.display, self.color, f_points, width=3)
+        pygame.draw.polygon(self.game.window.display, self.color, f_points)
 
 
