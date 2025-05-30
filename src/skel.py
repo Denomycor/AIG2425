@@ -7,11 +7,14 @@ class GameObject(object):
     def __init__(self, game):
         self.game = game
         self.objects: list[GameObject] = []
+        self.parent: object = None
 
     def add_object(self, game_object):
         self.objects.append(game_object)
+        game_object.parent = self
 
     def remove_object(self, game_object):
+        game_object.parent = None
         self.objects.remove(game_object)
 
     def draw(self):
@@ -37,8 +40,10 @@ class Game:
 
     def add_object(self, game_object: GameObject):
         self.objects.append(game_object)
+        game_object.parent = self
 
     def remove_object(self, game_object: GameObject):
+        game_object.parent = None
         self.objects.remove(game_object)
 
     def run(self):
@@ -82,4 +87,23 @@ class WorldObject(GameObject):
         self.pos = vec2.zero()
         self.rotation = 0
         self.scale = vec2.one()
+
+    def get_inherited_pos(self):
+        if isinstance(self.parent, WorldObject):
+            return self.pos + self.parent.get_inherited_pos()
+        else:
+            return self.pos
+
+    def get_inherited_scale(self):
+        if isinstance(self.parent, WorldObject):
+            scale = self.parent.get_inherited_scale()
+            return vec2(self.scale.x * scale.x, self.scale.y * scale.y)
+        else:
+            return self.scale
+
+    def get_inherited_rotation(self):
+        if isinstance(self.parent, WorldObject):
+            return self.rotation + self.parent.get_inherited_rotation()
+        else:
+            return self.rotation
 
