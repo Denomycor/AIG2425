@@ -1,4 +1,4 @@
-from sensor import Sensor
+from sensor import RaycastSensor, Sensor
 from skel import WorldObject
 from vec2 import vec2
 import pygame
@@ -22,8 +22,8 @@ class Car(WorldObject):
 
 
     def init_sensors(self, track):
-        s1 = Sensor(self.game, 50, track)
-        s2 = Sensor(self.game, 50, track)
+        s1 = RaycastSensor(self.game, 50, track)
+        s2 = RaycastSensor(self.game, 50, track)
         s2.rotation = math.pi/2
         s2.debug = True
         s1.debug = True
@@ -32,12 +32,14 @@ class Car(WorldObject):
         self.add_object(s2)
 
 
-    def move_forward(self, delta):
-        direction = vec2.from_angle(self.rotation)
-        self.pos += direction * self.top_speed * delta
+    def manual_forward(self, delta):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            direction = vec2.from_angle(self.rotation)
+            self.pos += direction * self.top_speed * delta
 
 
-    def steer(self, delta):
+    def manual_steer(self, delta):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d]:
             self.rotation += self.steering * delta
@@ -47,8 +49,8 @@ class Car(WorldObject):
 
     def process(self, delta):
         super().process(delta)
-        self.steer(delta)
-        self.move_forward(delta)
+        self.manual_steer(delta)
+        self.manual_forward(delta)
 
 
     def draw(self):
@@ -60,4 +62,8 @@ class Car(WorldObject):
         f_points = [v.to_tuple() for v in points2]
         
         pygame.draw.polygon(self.game.window.display, self.color, f_points)
+
+
+class CarAI:
+    pass
 
