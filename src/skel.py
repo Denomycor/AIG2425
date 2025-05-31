@@ -8,6 +8,7 @@ class GameObject(object):
         self.game = game
         self.objects: list[GameObject] = []
         self.parent: object = None
+        self.debug = False
 
     def add_object(self, game_object):
         self.objects.append(game_object)
@@ -20,6 +21,10 @@ class GameObject(object):
     def draw(self):
         for c in self.objects:
             c.draw()
+
+    def debug_draw(self):
+        for c in self.objects:
+            c.debug_draw()
 
     def process(self, delta):
         for c in self.objects:
@@ -65,6 +70,10 @@ class Game:
         for go in self.objects:
             go.draw()
 
+        for go in self.objects:
+            if(go.debug):
+                go.debug_draw()
+
         pygame.display.flip()
 
 
@@ -85,25 +94,25 @@ class WorldObject(GameObject):
     def __init__(self, game):
         super().__init__(game)
         self.pos = vec2.zero()
-        self.rotation = 0
+        self.rotation = 0.0
         self.scale = vec2.one()
 
-    def get_inherited_pos(self):
+    def get_global_pos(self):
         if isinstance(self.parent, WorldObject):
-            return self.pos + self.parent.get_inherited_pos()
+            return self.pos + self.parent.get_global_pos()
         else:
             return self.pos
 
-    def get_inherited_scale(self):
+    def get_global_scale(self):
         if isinstance(self.parent, WorldObject):
-            scale = self.parent.get_inherited_scale()
+            scale = self.parent.get_global_scale()
             return vec2(self.scale.x * scale.x, self.scale.y * scale.y)
         else:
             return self.scale
 
-    def get_inherited_rotation(self):
+    def get_global_rotation(self):
         if isinstance(self.parent, WorldObject):
-            return self.rotation + self.parent.get_inherited_rotation()
+            return self.rotation + self.parent.get_global_rotation()
         else:
             return self.rotation
 

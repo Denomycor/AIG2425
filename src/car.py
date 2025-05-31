@@ -1,7 +1,9 @@
+from sensor import Sensor
 from skel import WorldObject
 from vec2 import vec2
 import pygame
 import shapes
+import math
 from transform import apply_transform_to_points, chain_transforms, rotation, transpose, scale
 
 
@@ -17,6 +19,17 @@ class Car(WorldObject):
         self.color = color
 
         self.pos = vec2(1920/4, 1080/4)
+
+
+    def init_sensors(self, track):
+        s1 = Sensor(self.game, 50, track)
+        s2 = Sensor(self.game, 50, track)
+        s2.rotation = math.pi/2
+        s2.debug = True
+        s1.debug = True
+        self.debug = True
+        self.add_object(s1)
+        self.add_object(s2)
 
 
     def move_forward(self, delta):
@@ -47,5 +60,4 @@ class Car(WorldObject):
         f_points = [v.to_tuple() for v in points2]
         
         pygame.draw.polygon(self.game.window.display, self.color, f_points)
-
 
