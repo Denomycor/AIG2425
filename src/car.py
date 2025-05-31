@@ -24,12 +24,16 @@ class Car(WorldObject):
     def init_sensors(self, track):
         s1 = RaycastSensor(self.game, 50, track)
         s2 = RaycastSensor(self.game, 50, track)
+        s3 = RaycastSensor(self.game, 50, track)
         s2.rotation = math.pi/2
+        s3.rotation = -math.pi/2
+        s3.debug = True
         s2.debug = True
         s1.debug = True
         self.debug = True
         self.add_object(s1)
         self.add_object(s2)
+        self.add_object(s3)
 
 
     def manual_forward(self, delta):
