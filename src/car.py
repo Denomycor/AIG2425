@@ -20,6 +20,8 @@ class Car(WorldObject):
 
         self.pos = vec2(1920/4, 1080/4)
 
+        self.velocity = vec2(0,0)
+
 
     def init_sensors(self, track):
         s1 = RaycastSensor(self.game, 50, track)
@@ -38,9 +40,19 @@ class Car(WorldObject):
 
     def manual_forward(self, delta):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
+        if(keys[pygame.K_s]): # brake
+            v = self.velocity.len()
+            v = max(0, v-20)
+            self.velocity = self.velocity.limit_len(v)
+        self.velocity = self.velocity.limit_len(self.top_speed)
+        if keys[pygame.K_w]: # rev
             direction = vec2.from_angle(self.rotation)
-            self.pos += direction * self.top_speed * delta
+            self.velocity += direction * self.acceleration
+        else: # drag
+            v = self.velocity.len()
+            v = max(0, v-5)
+            self.velocity = self.velocity.limit_len(v)
+        self.velocity = self.velocity.limit_len(self.top_speed)
 
 
     def manual_steer(self, delta):
@@ -55,6 +67,7 @@ class Car(WorldObject):
         super().process(delta)
         self.manual_steer(delta)
         self.manual_forward(delta)
+        self.pos += self.velocity * delta
 
 
     def draw(self):

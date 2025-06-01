@@ -79,3 +79,9 @@ class vec2:
     def to_tuple(self):
         return (self.x, self.y)
 
+    def limit_len(self, value):
+        if self.len() > value:
+            return self.normalized() * value
+        else:
+            return self
+
