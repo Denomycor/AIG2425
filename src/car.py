@@ -1,4 +1,4 @@
-from sensor import RaycastSensor, Sensor
+from sensor import RaycastSensor
 from skel import WorldObject
 from vec2 import vec2
 import pygame
