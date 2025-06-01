@@ -48,6 +48,7 @@ class RaycastSensor(Sensor):
         self.track = track
         self.collision_point = vec2(0,0)
         self.epsilon = 0.1
+        self.distance = self.reach  # valor inicial caso não haja colisão
 
 
     def sdf(self, point) -> float:
@@ -91,19 +92,22 @@ class RaycastSensor(Sensor):
         i = 0
         while acc < self.reach:
             i += 1
-            if(i > 100):
+            if i > 100:
                 self.state = False
-                return 
+                self.distance = self.reach  # sem colisão, distância máxima
+                return
 
             point = pos + direction * acc
             dist = self.sdf(point)
-            if(dist <= self.epsilon):
+            if dist <= self.epsilon:
                 self.state = True
                 self.collision_point = point
+                self.distance = acc  # <--- Aqui guardamos a distância
                 return
             else:
                 acc += dist
-        
+
         self.state = False
-        return 
+        self.distance = self.reach  # sem colisão
+        return
 

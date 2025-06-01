@@ -9,7 +9,7 @@ from transform import apply_transform_to_points, chain_transforms, rotation, tra
 
 class Car(WorldObject):
     
-    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, color):
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, color, recorder):
         super().__init__(game)
         self.top_speed = top_speed
         self.acceleration = acceleration
@@ -20,16 +20,19 @@ class Car(WorldObject):
 
         self.pos = vec2(1920/4, 1080/4)
 
+        self.recorder = recorder  
+        self.sensors = []
+
 
     def init_sensors(self, track):
-        s1 = RaycastSensor(self.game, 50, track)
-        s2 = RaycastSensor(self.game, 50, track)
-        s2.rotation = math.pi/2
-        s2.debug = True
-        s1.debug = True
+        angles = [-0.6, -0.3, 0, 0.3, 0.6]  # 5 sensores angulados
+        for angle in angles:
+            sensor = RaycastSensor(self.game, 100, track)
+            sensor.rotation = angle
+            sensor.debug = True
+            self.add_object(sensor)
+            self.sensors.append(sensor)
         self.debug = True
-        self.add_object(s1)
-        self.add_object(s2)
 
 
     def manual_forward(self, delta):
@@ -37,20 +40,38 @@ class Car(WorldObject):
         if keys[pygame.K_w]:
             direction = vec2.from_angle(self.rotation)
             self.pos += direction * self.top_speed * delta
-
+            return "forward"
+        return None
 
     def manual_steer(self, delta):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d]:
             self.rotation += self.steering * delta
-        if keys[pygame.K_a]:
+            return "right"
+        elif keys[pygame.K_a]:
             self.rotation -= self.steering * delta
+            return "left"
+        return None
 
 
     def process(self, delta):
         super().process(delta)
-        self.manual_steer(delta)
-        self.manual_forward(delta)
+
+        action = self.manual_steer(delta)
+        forward = self.manual_forward(delta)
+
+        # Combina ações (se virar e andar, regista como "left_forward" por ex.)
+        combined_action = None
+        if forward and action:
+            combined_action = f"{action}_{forward}"
+        elif forward:
+            combined_action = forward
+        elif action:
+            combined_action = action
+
+        if self.recorder and combined_action:
+            distances = [sensor.distance for sensor in self.sensors]
+            self.recorder.record(distances, combined_action)
 
 
     def draw(self):
