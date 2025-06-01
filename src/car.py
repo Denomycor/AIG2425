@@ -44,8 +44,7 @@ class Car(WorldObject):
             v = self.velocity.len()
             v = max(0, v-20)
             self.velocity = self.velocity.limit_len(v)
-        self.velocity = self.velocity.limit_len(self.top_speed)
-        if keys[pygame.K_w]: # rev
+        elif keys[pygame.K_w]: # rev
             direction = vec2.from_angle(self.rotation)
             self.velocity += direction * self.acceleration
         else: # drag
