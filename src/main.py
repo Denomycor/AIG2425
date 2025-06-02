@@ -1,5 +1,5 @@
 from skel import Game, Window
-from car import AutoCar
+from car import AutoCar, ManualCar
 import pygame
 import math
 from vec2 import vec2
