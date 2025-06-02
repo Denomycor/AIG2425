@@ -1,4 +1,5 @@
 from car_ai import DecisionTreeWrapper
+from label import Label
 from sensor import RaycastSensor
 from skel import WorldObject
 from vec2 import vec2
@@ -8,6 +9,11 @@ import shapes
 import math
 import pandas as pd
 from transform import apply_transform_to_points, chain_transforms, rotation, transpose, scale
+
+
+
+def deg_to_rad(ang):
+    return ang * math.pi / 180
 
 
 class AbstractCar(WorldObject):
@@ -26,11 +32,17 @@ class AbstractCar(WorldObject):
         self.velocity = vec2(0,0)
         self.last_action = 0
 
+        label = Label(game, "Toyota Corolla", color=color)
+        self.add_object(label)
+        label.pos = vec2(-50, -30)
+
+
 
     def init_sensors(self, track):
+        angles = [0, 30, -30, 90, -90, 120, -120]
         for i in range(7):
             s = RaycastSensor(self.game, 150, track)
-            s.rotation = -math.pi/2 + math.pi/7*i
+            s.rotation = deg_to_rad(angles[i])
             s.debug = True
             self.add_object(s)
             self.sensors.append(s)
@@ -86,7 +98,6 @@ class AbstractCar(WorldObject):
 
 
     def dispatch_actions(self, mask, delta):
-        print(mask)
         if(mask & 0x01):
             self.accelerate()
         if(mask & 0x02):
@@ -131,6 +142,10 @@ class ManualCar(AbstractCar):
 
     def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
+
+
+    def init_sensors(self, track):
+        super().init_sensors(track)
         # self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
 
 
