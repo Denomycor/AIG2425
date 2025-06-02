@@ -21,12 +21,14 @@ def main():
         drag_force=5.0,
         color=(255, 0, 0)
     )
+    car.debug = True
     track = Track(game, [vec2(200, 200), vec2(800, 500), vec2(700, 300)], (0,0,0), 40, [car])
 
     game.add_object(track)
     game.add_object(car)
 
     car.init_sensors(track)
+
     while(game.running):
         game.run()
 
