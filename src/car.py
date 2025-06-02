@@ -38,8 +38,8 @@ class AbstractCar(WorldObject):
 
 
     def init_sensors(self, track):
-        angles = [0, 30, -30, 90, -90, 120, -120]
-        for i in range(7):
+        angles = [0, 30, -30, 60, -60, 90, -90, 120, -120]
+        for i in range(9):
             s = RaycastSensor(self.game, 150, track)
             s.rotation = deg_to_rad(angles[i])
             s.debug = True
@@ -122,7 +122,7 @@ class AbstractCar(WorldObject):
 
     # Pack all sensor info into an array
     def pack_sensors(self):
-       return [s.collision_distance() for s in self.sensors] + [s.state for s in self.sensors]
+       return [s.collision_distance() if s.state else -1 for s in self.sensors] + [s.state for s in self.sensors]
 
 
     def draw(self):
@@ -145,7 +145,7 @@ class ManualCar(AbstractCar):
 
     def init_sensors(self, track):
         super().init_sensors(track)
-        # self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
+        self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
 
 
     def process(self, delta):
@@ -156,7 +156,7 @@ class ManualCar(AbstractCar):
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)
         self.pos += self.velocity * delta
-        # self.recorder.add_entry([str(s.collision_distance()) for s in self.sensors] + [str(s.state) for s in self.sensors] + [str(self.last_action)])
+        self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
 
 
 
