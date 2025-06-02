@@ -15,9 +15,10 @@ def main():
     car = Car(
         game,
         top_speed=220.0,
-        acceleration=10.0,
+        acceleration=15.0,
         steering=math.pi*2,
-        break_strenght=5.0,
+        break_strenght=20.0,
+        drag_force=5.0,
         color=(255, 0, 0)
     )
     track = Track(game, [vec2(200, 200), vec2(800, 500), vec2(700, 300)], (0,0,0), 40, [car])
