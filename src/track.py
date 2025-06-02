@@ -23,13 +23,25 @@ class Track(GameObject):
         super().draw()
         pygame.draw.circle(self.game.window.display, self.color, self.points[0].to_tuple(), self.width//2)
         for (p1,p2) in self.segments():
-            pygame.draw.line(self.game.window.display, self.color, p1.to_tuple(), p2.to_tuple(), self.width)
+            self.draw_line(p1, p2)
             pygame.draw.circle(self.game.window.display, self.color, p2.to_tuple(), self.width//2)
 
         # draw projected cars
         for car in self.cars:
             pos = self.track_car(car)
             pygame.draw.circle(self.game.window.display, car.color, pos.to_tuple(), 4)
+
+
+    def draw_line(self, p1: vec2, p2: vec2):
+        dir = p1.direction_to(p2)
+        normal = dir.normal_cw()
+        p11 = p1 + normal*self.width/2
+        p12 = p1 - normal*self.width/2
+        p21 = p2 + normal*self.width/2
+        p22 = p2 - normal*self.width/2
+        points = [p.to_tuple() for p in [p11, p12, p22, p21]]
+        pygame.draw.polygon(self.game.window.display, self.color, points)
+
 
 
     def track_car(self, car):

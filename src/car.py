@@ -37,7 +37,6 @@ class AbstractCar(WorldObject):
         label.pos = vec2(-50, -30)
 
 
-
     def init_sensors(self, track):
         angles = [0, 30, -30, 90, -90, 120, -120]
         for i in range(7):
@@ -161,7 +160,7 @@ class ManualCar(AbstractCar):
 
 
 
-class AutoCar(AbstractCar):
+class DTCar(AbstractCar):
     
     def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)

@@ -85,3 +85,9 @@ class vec2:
         else:
             return self
 
+    def normal_ccw(self):
+        return vec2(-self.y, self.x)
+
+    def normal_cw(self):
+        return vec2(self.y, -self.x)
+
