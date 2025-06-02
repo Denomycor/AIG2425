@@ -14,7 +14,7 @@ def main():
     game = Game(window)
     car = AutoCar(
         game,
-        top_speed=160.0,
+        top_speed=100.0,
         acceleration=15.0,
         steering=math.pi*1.5,
         break_strenght=15.0,
