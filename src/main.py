@@ -1,5 +1,5 @@
 from skel import Game, Window
-from car import Car
+from car import AutoCar
 import pygame
 import math
 from vec2 import vec2
@@ -12,22 +12,24 @@ def main():
 
     window = Window((1920/2, 1080/2), "Test", (255,255,255))
     game = Game(window)
-    car = Car(
+    car = AutoCar(
         game,
-        top_speed=220.0,
+        top_speed=160.0,
         acceleration=15.0,
-        steering=math.pi*2,
-        break_strenght=20.0,
-        drag_force=5.0,
+        steering=math.pi*1.5,
+        break_strenght=15.0,
+        drag_force=10.0,
         color=(255, 0, 0)
     )
     car.debug = True
-    track = Track(game, [vec2(200, 200), vec2(800, 500), vec2(700, 300)], (0,0,0), 40, [car])
+    car.pos = vec2(100, 100)
+
+    track = Track(game, [vec2(100, 100), vec2(100, 400), vec2(400, 400), vec2(600,100), vec2(900, 100), vec2(900, 400), vec2(600, 400), vec2(400,100), vec2(100,100)], (0,0,0), 70, [car])
+    car.init_sensors(track)
 
     game.add_object(track)
     game.add_object(car)
 
-    car.init_sensors(track)
 
     while(game.running):
         game.run()
