@@ -4,14 +4,28 @@ from vec2 import vec2
 import pygame
 
 
+class TrackCarInfo:
+
+    def __init__(self):
+        self.laps = 0
+        self.distance = 0
+        self.current_projected = vec2.zero()
+
+
+
 class Track(GameObject):
     
     def __init__(self, game, points, color, width, cars):
+        self.MAX_SKIP = 20
         super().__init__(game)
         self.points = points
         self.color = color
         self.width = width
         self.cars = cars
+        self.len = self.track_len()
+        self.carinfos = [TrackCarInfo() for _ in cars]
+        for car in cars:
+            self.carinfos[self.cars.index(car)].current_projected = self.track_car(car)
         assert len(points) > 1, "Must have more than 1 point"
 
 
@@ -28,7 +42,7 @@ class Track(GameObject):
 
         # draw projected cars
         for car in self.cars:
-            pos = self.track_car(car)
+            pos = self.carinfos[self.cars.index(car)].current_projected
             pygame.draw.circle(self.game.window.display, car.color, pos.to_tuple(), 4)
 
 
@@ -42,6 +56,11 @@ class Track(GameObject):
         points = [p.to_tuple() for p in [p11, p12, p22, p21]]
         pygame.draw.polygon(self.game.window.display, self.color, points)
 
+
+    def process(self, delta):
+        super().process(delta)
+        for car in self.cars:
+            self.carinfos[self.cars.index(car)].current_projected = self.track_car(car)
 
 
     def track_car(self, car):
@@ -65,4 +84,25 @@ class Track(GameObject):
             if seg.distance_to_point(point) <= self.width//2:
                 return True
         return False
+
+    
+    # distance of the point along the track since the start
+    def distance_on_track(self, point):
+        acc = 0
+        for (p1, p2) in self.segments():
+            seg = segment(p1,p2)
+            if seg.has_point(point):
+                acc += p1.distance_to(point)
+                return acc
+            else:
+                acc += p1.distance_to(p2)
+        return acc
+
+    
+    # total track len
+    def track_len(self):
+        acc = 0
+        for (p1, p2) in self.segments():
+            acc += p1.distance_to(p2)
+        return acc
 

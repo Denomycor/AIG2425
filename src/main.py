@@ -12,7 +12,7 @@ def main():
 
     window = Window((1920/2, 1080/2), "Test", (255,255,255))
     game = Game(window)
-    car = DTCar(
+    car = ManualCar(
         game,
         top_speed=100.0,
         acceleration=15.0,

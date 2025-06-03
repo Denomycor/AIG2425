@@ -32,9 +32,9 @@ class AbstractCar(WorldObject):
         self.velocity = vec2(0,0)
         self.last_action = 0
 
-        label = Label(game, "Toyota Corolla", color=color)
-        self.add_object(label)
-        label.pos = vec2(-50, -30)
+        self.name = Label(game, "Toyota Corolla", color=color)
+        self.add_object(self.name)
+        self.name.pos = vec2(-50, -30)
 
 
     def init_sensors(self, track):
@@ -145,7 +145,7 @@ class ManualCar(AbstractCar):
 
     def init_sensors(self, track):
         super().init_sensors(track)
-        self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
+        # self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
 
 
     def process(self, delta):
@@ -156,7 +156,7 @@ class ManualCar(AbstractCar):
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)
         self.pos += self.velocity * delta
-        self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
+        # self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
 
 
 
