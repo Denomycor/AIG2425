@@ -1,3 +1,4 @@
+from pygame.math import clamp
 from line import segment
 from skel import GameObject
 from vec2 import vec2
@@ -85,6 +86,17 @@ class Track(GameObject):
             dist = seg.distance_to_point(point)
             acc = dist if dist < acc else acc
         return acc
+
+
+    def current_seg(self, point):
+        acc = float('inf')
+        candidate = segment(vec2.zero(), vec2.zero())
+        for (p1, p2) in self.segments():
+            seg = segment(p1, p2)
+            dist = seg.distance_to_point(point)
+            acc = dist if dist < acc else acc
+            candidate = seg if dist < acc else candidate
+        return candidate
 
 
     def has_point(self, point):
