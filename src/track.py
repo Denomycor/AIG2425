@@ -78,6 +78,15 @@ class Track(GameObject):
         return point
 
 
+    def distance_to_track(self, point):
+        acc = float('inf')
+        for (p1, p2) in self.segments():
+            seg = segment(p1, p2)
+            dist = seg.distance_to_point(point)
+            acc = dist if dist < acc else acc
+        return acc
+
+
     def has_point(self, point):
         for (p1, p2) in self.segments():
             seg = segment(p1, p2)
