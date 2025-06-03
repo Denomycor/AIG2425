@@ -199,7 +199,6 @@ class MLPCar(AbstractCar):
         self.last_action = 0
         out = self.wrapper.predict(self.pack_sensors_normalized())
         self.dispatch_actions(out, delta)
-        print(out)
 
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)

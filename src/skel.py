@@ -43,6 +43,7 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.background = background
+        self.elapsed_time = 0
 
     def add_object(self, game_object: GameObject):
         self.objects.append(game_object)
@@ -53,9 +54,11 @@ class Game:
         self.objects.remove(game_object)
 
     def run(self):
-        self.window.display.fill(self.window.default_color)
+        if(not self.background):
+            self.window.display.fill(self.window.default_color)
         events = []
         delta = self.clock.tick(60) / 1000
+        self.elapsed_time += delta
         for e in pygame.event.get():
             events.append(e)
             if(e.type == pygame.QUIT):
@@ -73,10 +76,11 @@ class Game:
                 go.draw()
 
         for go in self.objects:
-            if(go.debug):
+            if(go.debug and not self.background):
                 go.debug_draw()
 
-        pygame.display.flip()
+        if(not self.background):
+            pygame.display.flip()
 
 
 class Window:
