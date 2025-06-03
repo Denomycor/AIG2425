@@ -1,4 +1,4 @@
-from car_ai import DecisionTreeWrapper
+from car_ai import DecisionTreeWrapper, NeuralWrapper
 from label import Label
 from sensor import RaycastSensor
 from skel import WorldObject
@@ -125,6 +125,12 @@ class AbstractCar(WorldObject):
        return [s.collision_distance() if s.state else -1 for s in self.sensors] + [s.state for s in self.sensors]
 
 
+    # Pack all sensor info into an array, all info is normalized [0,1]
+    def pack_sensors_normalized(self):
+       return [s.collision_distance_normalized() for s in self.sensors] + [1 if s.state else 0 for s in self.sensors]
+
+
+
     def draw(self):
         super().draw()
         points = shapes.triangle()
@@ -145,7 +151,7 @@ class ManualCar(AbstractCar):
 
     def init_sensors(self, track):
         super().init_sensors(track)
-        self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
+        # self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
 
 
     def process(self, delta):
@@ -156,7 +162,7 @@ class ManualCar(AbstractCar):
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)
         self.pos += self.velocity * delta
-        self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
+        # self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
 
 
 
@@ -174,6 +180,25 @@ class DTCar(AbstractCar):
         inp = self.sensor_prediction(self.pack_sensors())
         out = self.model.predict(pd.DataFrame([inp]))
         self.dispatch_actions(out[0], delta)
+
+        self.drag()
+        self.velocity = self.velocity.limit_len(self.top_speed)
+        self.pos += self.velocity * delta
+
+
+class MLPCar(AbstractCar):
+
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
+        super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
+        self.wrapper = NeuralWrapper("manual_drive_data.csv")
+        self.wrapper.sgd()
+
+
+    def process(self, delta):
+        super().process(delta)
+        self.last_action = 0
+        out = self.wrapper.predict(self.pack_sensors_normalized())
+        self.dispatch_actions(out, delta)
 
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)

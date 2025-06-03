@@ -86,6 +86,10 @@ class RaycastSensor(Sensor):
         return self.get_global_pos().distance_to(self.collision_point)
 
 
+    def collision_distance_normalized(self):
+        return self.get_global_pos().distance_to(self.collision_point) / self.reach
+
+
     def raymarch(self):
         pos = self.get_global_pos()
         rot = self.get_global_rotation()

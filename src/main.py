@@ -1,5 +1,5 @@
 from skel import Game, Window
-from car import DTCar, ManualCar
+from car import MLPCar, DTCar, ManualCar
 import pygame
 import math
 from vec2 import vec2
@@ -12,7 +12,7 @@ def main():
 
     window = Window((1920/2, 1080/2), "Test", (255,255,255))
     game = Game(window)
-    car = DTCar(
+    car = MLPCar(
         game,
         top_speed=100.0,
         acceleration=15.0,
