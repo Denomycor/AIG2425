@@ -37,11 +37,12 @@ class GameObject(object):
 
 class Game:
 
-    def __init__(self, window):
+    def __init__(self, window, background=False):
         self.objects: list[GameObject] = []
         self.window: Window = window
         self.running = True
         self.clock = pygame.time.Clock()
+        self.background = background
 
     def add_object(self, game_object: GameObject):
         self.objects.append(game_object)
@@ -68,7 +69,8 @@ class Game:
             go.process(delta)
 
         for go in self.objects:
-            go.draw()
+            if(not self.background):
+                go.draw()
 
         for go in self.objects:
             if(go.debug):

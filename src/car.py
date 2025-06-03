@@ -2,6 +2,7 @@ from car_ai import DecisionTreeWrapper, NeuralWrapper
 from label import Label
 from sensor import RaycastSensor
 from skel import WorldObject
+from typing import OrderedDict
 from vec2 import vec2
 from recorder import DataRecorder
 import pygame
@@ -190,8 +191,7 @@ class MLPCar(AbstractCar):
 
     def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
-        self.wrapper = NeuralWrapper("manual_drive_data.csv")
-        self.wrapper.sgd()
+        self.wrapper = NeuralWrapper()
 
 
     def process(self, delta):
@@ -199,8 +199,19 @@ class MLPCar(AbstractCar):
         self.last_action = 0
         out = self.wrapper.predict(self.pack_sensors_normalized())
         self.dispatch_actions(out, delta)
+        print(out)
 
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)
         self.pos += self.velocity * delta
+
+
+    # For each organism set its genes to the provided ones
+    def set_genes(self, genes: OrderedDict):
+        self.wrapper.set_neural_genes(genes)
+
+
+    # Gets the genes that this simulation's organisms ar using
+    def get_genes(self) -> dict:
+        return self.wrapper.get_neural_genes()
 
