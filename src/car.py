@@ -156,13 +156,15 @@ class AbstractCar(WorldObject):
 
 class ManualCar(AbstractCar):
 
-    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color, record = True):
+        self.record = record
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
 
 
     def init_sensors(self, track):
         super().init_sensors(track)
-        # self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
+        if self.record:
+            self.recorder = DataRecorder("manual_drive_data.csv", self.input_names() + ["action"])
 
 
     def process(self, delta):
@@ -173,7 +175,8 @@ class ManualCar(AbstractCar):
         self.drag()
         self.velocity = self.velocity.limit_len(self.top_speed)
         self.pos += self.velocity * delta
-        # self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
+        if self.record:
+            self.recorder.add_entry([str(v) for v in self.pack_sensors() + [self.last_action]])
 
 
 

@@ -3,7 +3,7 @@
 class DataRecorder:
 
     def __init__(self, file_name, col_names):
-        self.file = open(file_name, "w")
+        self.file = open(file_name, "a")
         self.cols = len(col_names)
         self.add_entry(col_names)
 
