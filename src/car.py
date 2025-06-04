@@ -1,4 +1,4 @@
-from car_ai import DecisionTreeWrapper
+from car_ai import DecisionTreeWrapper, SKNeuralNetwork
 from label import Label
 from sensor import RaycastSensor
 from skel import WorldObject
@@ -141,6 +141,12 @@ class AbstractCar(WorldObject):
     def pack_sensors(self):
        return [s.collision_distance() if s.state else -1 for s in self.sensors] + [s.state for s in self.sensors]
 
+    def pack_sensors2(self):
+       return [s.collision_distance() for s in self.sensors] + [s.state for s in self.sensors]
+
+    def pack_sensors_normalized(self):
+       return [s.collision_distance_normalized() for s in self.sensors] + [s.state for s in self.sensors]
+
 
     def draw(self):
         super().draw()
@@ -192,6 +198,25 @@ class DTCar(AbstractCar):
         super().process(delta)
         self.last_action = 0
         inp = self.sensor_prediction(self.pack_sensors())
+        out = self.model.predict(pd.DataFrame([inp]))
+        self.dispatch_actions(out[0], delta)
+
+        self.drag()
+        self.velocity = self.velocity.limit_len(self.top_speed)
+        self.pos += self.velocity * delta
+
+
+class SKMLPCar(AbstractCar):
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
+        super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
+        self.wrapper = SKNeuralNetwork("manual_drive_data.csv")
+        self.model = self.wrapper.make_model()
+
+
+    def process(self, delta):
+        super().process(delta)
+        self.last_action = 0
+        inp = self.pack_sensors2()
         out = self.model.predict(pd.DataFrame([inp]))
         self.dispatch_actions(out[0], delta)
 
