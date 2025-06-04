@@ -23,8 +23,10 @@ def main():
     )
     car.debug = True
     car.pos = vec2(100, 100)
+    car.rotation = math.pi/2
 
-    track = Track(game, [vec2(100, 100), vec2(100, 400), vec2(400, 400), vec2(600,100), vec2(900, 100), vec2(900, 400), vec2(600, 400), vec2(400,100), vec2(100,100)], (0,0,0), 70, [car])
+    # track = Track(game, [vec2(100, 100), vec2(100, 400), vec2(400, 400), vec2(600,100), vec2(900, 100), vec2(900, 400), vec2(600, 400), vec2(400,100), vec2(100,100)], (0,0,0), 70, [car])
+    track = Track(game, [vec2(100, 100), vec2(200, 400), vec2(350, 450), vec2(350, 200), vec2(500, 220), vec2(500, 400), vec2(800, 350), vec2(700, 120), vec2(200, 130), vec2(100,100) ], (0,0,0), 70, [car])
     car.init_sensors(track)
 
     game.add_object(track)
