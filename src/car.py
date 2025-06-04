@@ -9,6 +9,7 @@ import shapes
 import math
 import pandas as pd
 from transform import apply_transform_to_points, chain_transforms, rotation, transpose, scale
+from random import randint, random
 
 
 
@@ -77,16 +78,32 @@ class AbstractCar(WorldObject):
         v = self.velocity.len()
         v = max(0, v-self.break_strenght)
         self.velocity = self.velocity.limit_len(v)
+
+        # Add noise
+        noise_amn = 1
+        dir = self.velocity.normalized()
+        self.velocity += dir * randint(-noise_amn,noise_amn)
+
         self.last_action = self.last_action | 0x02
 
 
     def steer_left(self, delta):
         self.rotation += self.steering * delta
+
+        # Add noise
+        noise_amn = math.pi/6
+        self.rotation += random() * noise_amn * delta
+
         self.last_action = self.last_action | 0x04
 
 
     def steer_right(self, delta):
         self.rotation -= self.steering * delta
+
+        # Add noise
+        noise_amn = math.pi/6
+        self.rotation -= random() * noise_amn * delta
+
         self.last_action = self.last_action | 0x08
 
 
