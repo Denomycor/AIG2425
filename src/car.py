@@ -1,4 +1,4 @@
-from car_ai import DecisionTreeWrapper, SKNeuralNetwork
+from car_ai import DecisionTreeWrapper, SKNeuralNetwork, SVMWrapper, KNNWrapper
 from label import Label
 from sensor import RaycastSensor
 from skel import WorldObject
@@ -192,6 +192,7 @@ class DTCar(AbstractCar):
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
         self.wrapper = DecisionTreeWrapper("manual_drive_data.csv")
         self.model = self.wrapper.make_model()
+        self.wrapper.evaluate(self.model)
 
 
     def process(self, delta):
@@ -211,6 +212,47 @@ class SKMLPCar(AbstractCar):
         super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
         self.wrapper = SKNeuralNetwork("manual_drive_data.csv")
         self.model = self.wrapper.make_model()
+        self.wrapper.evaluate(self.model)
+
+
+    def process(self, delta):
+        super().process(delta)
+        self.last_action = 0
+        inp = self.pack_sensors_normalized()
+        out = self.model.predict(pd.DataFrame([inp]))
+        self.dispatch_actions(out[0], delta)
+
+        self.drag()
+        self.velocity = self.velocity.limit_len(self.top_speed)
+        self.pos += self.velocity * delta
+
+
+class SVMCar(AbstractCar):
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
+        super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
+        self.wrapper = SVMWrapper("manual_drive_data.csv")
+        self.model = self.wrapper.make_model()
+        self.wrapper.evaluate(self.model)
+
+
+    def process(self, delta):
+        super().process(delta)
+        self.last_action = 0
+        inp = self.pack_sensors2()
+        out = self.model.predict(pd.DataFrame([inp]))
+        self.dispatch_actions(out[0], delta)
+
+        self.drag()
+        self.velocity = self.velocity.limit_len(self.top_speed)
+        self.pos += self.velocity * delta
+
+
+class KNNCar(AbstractCar):
+    def __init__(self, game, *, top_speed: float, acceleration: float, steering: float, break_strenght: float, drag_force: float, color):
+        super().__init__(game, top_speed=top_speed, acceleration=acceleration, steering=steering, break_strenght=break_strenght, drag_force=drag_force, color=color)
+        self.wrapper = KNNWrapper("manual_drive_data.csv")
+        self.model = self.wrapper.make_model()
+        self.wrapper.evaluate(self.model)
 
 
     def process(self, delta):
