@@ -176,4 +176,5 @@ cython_debug/
 # Project ignores
 
 ProjectIAGames_24_25/
+report.ipynb
 
